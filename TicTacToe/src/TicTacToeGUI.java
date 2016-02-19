@@ -143,7 +143,9 @@ public class TicTacToeGUI
 			{
 				//Reports the involved label index when the mouse was pressed
 				String status = "You clicked on "+ event.getComponent().getClass().getName() + Integer.toString(index);								
-				lblFields[0].setText(status);;
+				lblFields[0].setText(status);
+				//Places a marker
+				placeMarker(initGame, lblFields, index); 				
 			}
 		}
 		//Creates the fields number 1 to 9
@@ -188,4 +190,25 @@ public class TicTacToeGUI
 		separator_4.setBounds(field_width * 2, 0, field_width * 2, field_width * 3);
 		panel.add(separator_4);		
 	}
+
+	/**
+	 * Places a marker
+	 */
+	private void placeMarker(TicTacToeGame game, JLabel[] lblFields, int index) 
+	{
+		String status = "";
+		//Applies the rules
+		game.gameStatus = game.applyRules(index);
+		for(int i = 1;i < 10;i++)
+		{
+			//Sets the fields
+			lblFields[i].setText(game.gameStatus.getField(i));  
+		}
+		if (game.gameStatus.getGameOver() == 1)
+		{
+			status = "The game is over! ";
+			status += "And the winner is " + game.gameStatus.getWinner();
+		}
+		lblFields[0].setText(status);
+	}	
 }

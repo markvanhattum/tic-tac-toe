@@ -54,6 +54,18 @@ public class TicTacToeGame
 			//Sets who's turn it is
 			currentPlayer = newValue;
 		}
+		public void switchPlayer()
+		{
+			//Sets who's turn it is
+			switch(currentPlayer)
+			{
+				case PLAYER_O:	currentPlayer = PLAYER_X;
+								break;
+				case PLAYER_X:	currentPlayer = PLAYER_O;
+								break;
+				default:		currentPlayer = PLAYER_X;
+			}
+		}
 		/**
 		 *  Fields
 	     */
@@ -112,35 +124,100 @@ public class TicTacToeGame
 	 *
 	 * @param args: Dummy string array
 	 */
-	public TicTacToeGame()
-	{
-
-		
-	}
-
-	/**
-	 * Launches the application
-	 *
-	 * @param args: Dummy string array
-	 */
 	public GameStatus getGameStatus(GameStatus givenGameStatus)
 	{
 		//Updates the given game status
-		givenGameStatus.currentPlayer = gameStatus.currentPlayer;
-		givenGameStatus.fields       = gameStatus.fields;
+		givenGameStatus.currentPlayer	= gameStatus.currentPlayer;
+		givenGameStatus.fields			= gameStatus.fields;
 		return givenGameStatus;
 	}
-	
-	/**
-	 * Launches the application
-	 *
-	 * @param args: Dummy string array
-	 */
-	public static void main(String[] args) 
+
+	public int countMarkers()
 	{
-		
-		System.out.println("A new game has begun!");
+		int returnValue = 0;
+		for(int index = 1;index < 10;index++)
+		{
+			if(gameStatus.fields[index] == PLAYER_X || gameStatus.fields[index] == PLAYER_O)
+			{
+				//Counts the markers
+				returnValue = returnValue + 1;
+			}
+		}
+		return returnValue;
 	}
 
+	public String theWinner()
+	{
+		String returnValue = "";
+		String allThree    = "";
+		String characterOne         = "";
+		String characterTwo         = "";
+		String characterThree       = "";
+		int length         = 0;
+		for(int i = 1;i < 9; i++)
+		{
+			switch (i)
+			{
+				case 1: allThree = gameStatus.fields[1]+gameStatus.fields[2]+gameStatus.fields[3]; break;
+				case 2: allThree = gameStatus.fields[4]+gameStatus.fields[5]+gameStatus.fields[6]; break;
+				case 3: allThree = gameStatus.fields[7]+gameStatus.fields[8]+gameStatus.fields[9]; break;
+				case 4: allThree = gameStatus.fields[1]+gameStatus.fields[4]+gameStatus.fields[7]; break;
+				case 5: allThree = gameStatus.fields[2]+gameStatus.fields[5]+gameStatus.fields[8]; break;
+				case 6: allThree = gameStatus.fields[3]+gameStatus.fields[6]+gameStatus.fields[9]; break;
+				case 7: allThree = gameStatus.fields[1]+gameStatus.fields[5]+gameStatus.fields[9]; break;
+				case 8: allThree = gameStatus.fields[3]+gameStatus.fields[5]+gameStatus.fields[7]; break;
+			}			
+			//Determines the length 
+			length = allThree.length();
+			if(length > 0)
+			{
+				characterOne   = allThree.substring(0, 1);
+			}
+			if(length > 1)
+			{
+				characterTwo   = allThree.substring(1, 2);
+			}
+			if(length > 2)
+			{
+				characterThree = allThree.substring(2, 3);
+				if(characterOne.equals(characterTwo))
+				{
+					 if(characterTwo.equals(characterThree))
+					 {
+						//We have a winner!
+						returnValue = characterOne;
+						break;
+					 }
+				}
+			}
+		}
+		return returnValue;
+	}
+
+	public GameStatus applyRules(int index)
+	{
+		//Makes a move
+		gameStatus.fields[index] = gameStatus.currentPlayer;
+		//Counts the markers
+		if(countMarkers() == 9)
+		{
+			//The board is full
+			gameStatus.gameOver = 1;
+			gameStatus.winner   = NOBODY;
+		}
+		//Counts three-in-a-row
+		String theWinner = theWinner();
+		if (!theWinner.isEmpty())
+		{
+			//We have a winner!
+			gameStatus.gameOver = 1;
+			gameStatus.winner   = theWinner;
+
+		}
+		//Switches player
+		gameStatus.switchPlayer();
+		//Returns the game status
+		return gameStatus;
+	}
 }
 
