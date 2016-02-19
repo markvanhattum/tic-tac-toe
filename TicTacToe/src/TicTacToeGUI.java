@@ -51,12 +51,25 @@ public class TicTacToeGUI
 	 */
 	public TicTacToeGUI() 
 	{
+		//A few hardcoded sizes
+		final int FIELD_WIDTH = 150;
+		final int BAR_HEIGHT  = 25;
 		//Declares a new game
 		TicTacToeGame initGame;
+		//Declares a new frame
+		JFrame initFrame;
+		//Declares a new panel
+		JPanel initPanel;
 		//Initializes the game
 		initGame = initializeGame();
-		//Initializes the GUI itself
-		initializeFrame(initGame);
+		//Initializes the frame
+		initFrame = initializeFrame(initGame, FIELD_WIDTH, BAR_HEIGHT);
+		//Initializes the panel
+		initPanel = initializePanel(initGame, initFrame, FIELD_WIDTH, BAR_HEIGHT);
+		//Initializes the labels
+		initializeLabels(initGame, initPanel, FIELD_WIDTH, BAR_HEIGHT);
+		//Initializes the lines
+		initializeLines(initPanel, FIELD_WIDTH, BAR_HEIGHT);
 	}
 
 	/**
@@ -72,32 +85,46 @@ public class TicTacToeGUI
 	/**
 	 * Initializes the frame
 	 */
-	private void initializeFrame(TicTacToeGame initGame) 
+	private JFrame initializeFrame(TicTacToeGame initGame, int field_width, int bar_height) 
 	{
-		//A few hardcoded sizes
-		final int FIELD_WIDTH = 150;
-		final int BAR_HEIGHT  = 25;
+		//Creates a new frame
+		frmTicTacToe = new JFrame();
+		frmTicTacToe.setTitle("Tic Tac Toe");
+		frmTicTacToe.setBounds(field_width, field_width, field_width * 3, field_width * 3 + bar_height * 2);
+		frmTicTacToe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmTicTacToe.getContentPane().setLayout(null);
+		return frmTicTacToe;
+	}
+
+	/**
+	 * Initializes the panel
+	 */
+	private JPanel initializePanel(TicTacToeGame initGame, JFrame frmTicTacToe, int field_width, int bar_height) 
+	{
+		//Creates a new panel within the frame
+		JPanel panel = new JPanel();
+		panel.setBounds(0, 0, field_width * 3, field_width * 3 + bar_height);
+		frmTicTacToe.getContentPane().add(panel);
+		panel.setLayout(null);
+		return panel;
+	}
+	
+	/**
+	 * Initializes the labels
+	 */
+	private void initializeLabels(TicTacToeGame initGame, JPanel panel, int field_width, int bar_height) 
+	{
 		//Nine fields plus a statusbar
 		JLabel[] lblFields = new JLabel[10];
 		//Labelnumber
 		int labelNumber = 0;
-		//Creates a new frame
-		frmTicTacToe = new JFrame();
-		frmTicTacToe.setTitle("Tic Tac Toe");
-		frmTicTacToe.setBounds(100, 100, 450, 500);
-		frmTicTacToe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmTicTacToe.getContentPane().setLayout(null);
-		//Creates a new panel within the frame
-		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, FIELD_WIDTH * 3, FIELD_WIDTH * 3 + BAR_HEIGHT);
-		frmTicTacToe.getContentPane().add(panel);
-		panel.setLayout(null);
 		//Creates status field number 0
 		lblFields[0] = new JLabel();
 		lblFields[0].setText(initGame.gameStatus.getField(0));
 		lblFields[0].setHorizontalAlignment(SwingConstants.CENTER);
-		lblFields[0].setBounds(0, FIELD_WIDTH * 3, FIELD_WIDTH * 3, BAR_HEIGHT);
+		lblFields[0].setBounds(0, field_width * 3, field_width * 3, bar_height);
 		panel.add(lblFields[0]);
+
 		/**
 		 * Overrides the Mouse Listener in order to retrieve the label index
 		 */
@@ -130,28 +157,35 @@ public class TicTacToeGUI
 				lblFields[labelNumber] = new JLabel();			
 				lblFields[labelNumber].setText(initGame.gameStatus.getField(1));
 				lblFields[labelNumber].setHorizontalAlignment(SwingConstants.CENTER);
-				lblFields[labelNumber].setBounds(x * FIELD_WIDTH, y * FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH);
+				lblFields[labelNumber].setBounds(x * field_width, y * field_width, field_width, field_width);
 				lblFields[labelNumber].addMouseListener(new MouseListenerWithIndex(labelNumber));
 				panel.add(lblFields[labelNumber]);			
 			}
 		}
+	}
+
+	/**
+	 * Initializes the lines
+	 */
+	private void initializeLines(JPanel panel, int field_width, int bar_height) 
+	{
 		//Creates line 1
 		JSeparator separator_1 = new JSeparator();
-		separator_1.setBounds(0, 150, 450, 150);
+		separator_1.setBounds(0, field_width, field_width * 3, field_width);
 		panel.add(separator_1);
 		//Creates line 2
 		JSeparator separator_2 = new JSeparator();
-		separator_2.setBounds(0, 300, 450, 300);
+		separator_2.setBounds(0, field_width * 2, field_width * 3, field_width * 2);
 		panel.add(separator_2);
 		//Creates line 3
 		JSeparator separator_3 = new JSeparator();
 		separator_3.setOrientation(SwingConstants.VERTICAL);
-		separator_3.setBounds(150, 0, 150, 450);
+		separator_3.setBounds(field_width, 0, field_width, field_width * 3);
 		panel.add(separator_3);
 		//Creates line 4
 		JSeparator separator_4 = new JSeparator();
 		separator_4.setOrientation(SwingConstants.VERTICAL);
-		separator_4.setBounds(300, 0, 300, 450);
+		separator_4.setBounds(field_width * 2, 0, field_width * 2, field_width * 3);
 		panel.add(separator_4);		
 	}
 }
