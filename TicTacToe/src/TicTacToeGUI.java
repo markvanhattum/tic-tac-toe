@@ -120,7 +120,7 @@ public class TicTacToeGUI
 		int labelNumber = 0;
 		//Creates status field number 0
 		lblFields[0] = new JLabel();
-		lblFields[0].setText(initGame.gameStatus.getField(0));
+		lblFields[0].setText(initGame.ticTacToeGameStatus.getField(0));
 		lblFields[0].setHorizontalAlignment(SwingConstants.CENTER);
 		lblFields[0].setBounds(0, field_width * 3, field_width * 3, bar_height);
 		panel.add(lblFields[0]);
@@ -157,7 +157,7 @@ public class TicTacToeGUI
 				labelNumber = labelNumber + 1;
 				//Creates a field 
 				lblFields[labelNumber] = new JLabel();			
-				lblFields[labelNumber].setText(initGame.gameStatus.getField(1));
+				lblFields[labelNumber].setText(initGame.ticTacToeGameStatus.getField(1));
 				lblFields[labelNumber].setHorizontalAlignment(SwingConstants.CENTER);
 				lblFields[labelNumber].setBounds(x * field_width, y * field_width, field_width, field_width);
 				lblFields[labelNumber].addMouseListener(new MouseListenerWithIndex(labelNumber));
@@ -198,17 +198,18 @@ public class TicTacToeGUI
 	{
 		String status = "";
 		//Applies the rules
-		game.gameStatus = game.applyRules(index);
+		game.ticTacToeGameStatus = game.placeMarker(index);
 		for(int i = 1;i < 10;i++)
 		{
 			//Sets the fields
-			lblFields[i].setText(game.gameStatus.getField(i));  
+			lblFields[i].setText(game.ticTacToeGameStatus.getField(i));  
 		}
-		if (game.gameStatus.getGameOver() == 1)
+		if (game.ticTacToeGameStatus.getGameOver() == 1)
 		{
 			status = "The game is over! ";
-			status += "And the winner is " + game.gameStatus.getWinner();
+			status += "And the winner is " + game.ticTacToeGameStatus.getWinner() + ".";
 		}
+		status = Strings.NullValue(status, game.ticTacToeGameStatus.getField(0));
 		lblFields[0].setText(status);
 	}	
 }
