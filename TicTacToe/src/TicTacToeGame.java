@@ -74,19 +74,22 @@ public class TicTacToeGame
 	 */
 	public void applyRulesBefore(Integer index)
 	{
-		//No errors so far
-		ticTacToeGameStatus.setErrorMessage(null);
-		//Has the game ended?
-		if (ticTacToeGameStatus.getGameOver() == 1)
-		{
-			//Start a new game
-			ticTacToeGameStatus = new TicTacToeGameStatus();
-		}
 		//Is the current move valid?
 		if(!isValidMove(index) && index != null)
 		{
 			//The current move is invalid
 			ticTacToeGameStatus.setErrorMessage("Invalid move");
+		}
+		else
+		{
+			//No errors so far
+			ticTacToeGameStatus.setErrorMessage(null);
+		}
+		//Has the game ended?
+		if (ticTacToeGameStatus.getGameOver() == 1)
+		{
+			//Start a new game
+			ticTacToeGameStatus = new TicTacToeGameStatus();
 		}
 	}
 	
@@ -119,7 +122,7 @@ public class TicTacToeGame
 	{
 		//Applies the rules
 		applyRulesBefore(index);
-		if(ticTacToeGameStatus.getErrorMessage() == null)
+		if(ticTacToeGameStatus.getErrorMessage() == null && ticTacToeGameStatus.getGameOver() == 0)
 		{
 			//Makes a move
 			ticTacToeGameStatus.setField(index, ticTacToeGameStatus.getPlayer());

@@ -10,6 +10,11 @@ import javax.swing.*;
  */
 public class TicTacToeGUI 
 {
+	//The game has two players
+	public static final String PLAYER_X = "X";
+	public static final String PLAYER_O = "O";
+	public static final ImageIcon PICTURE_X = new ImageIcon("images/x.gif");
+	public static final ImageIcon PICTURE_O = new ImageIcon("images/o.gif");
 	//GUIs have frames
 	private JFrame frmTicTacToe;
 	
@@ -197,12 +202,17 @@ public class TicTacToeGUI
 	private void placeMarker(TicTacToeGame game, JLabel[] lblFields, int index) 
 	{
 		String status = "";
-		//Applies the rules
+		//Places a marker and applies the rules
 		game.ticTacToeGameStatus = game.placeMarker(index);
 		for(int i = 1;i < 10;i++)
 		{
 			//Sets the fields
-			lblFields[i].setText(game.ticTacToeGameStatus.getField(i));  
+			switch(game.ticTacToeGameStatus.getField(i))
+			{
+				case TicTacToeGame.PLAYER_X: lblFields[i].setIcon(PICTURE_X); break;
+				case TicTacToeGame.PLAYER_O: lblFields[i].setIcon(PICTURE_O); break;
+				default: lblFields[i].setIcon(null); break;
+			}
 		}
 		if (game.ticTacToeGameStatus.getGameOver() == 1)
 		{
