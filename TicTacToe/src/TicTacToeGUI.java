@@ -19,6 +19,10 @@ public class TicTacToeGUI
 	private JFrame frmTicTacToe;
 	
 	/**
+	 * A menu item listener
+	 */
+
+	/**
 	 * Launches the application
 	 *
 	 * @param args: Dummy string array
@@ -65,6 +69,8 @@ public class TicTacToeGUI
 		JFrame initFrame;
 		//Declares a new panel
 		JPanel initPanel;
+		//Declares new labels
+		JLabel[] initFields;
 		//Initializes the game
 		initGame = initializeGame();
 		//Initializes the frame
@@ -72,9 +78,11 @@ public class TicTacToeGUI
 		//Initializes the panel
 		initPanel = initializePanel(initGame, initFrame, FIELD_WIDTH, BAR_HEIGHT);
 		//Initializes the labels
-		initializeLabels(initGame, initPanel, FIELD_WIDTH, BAR_HEIGHT);
+		initFields = initializeLabels(initGame, initPanel, FIELD_WIDTH, BAR_HEIGHT);
+		//Initializes the menu
+		initializeMenu(initFrame, initFields);
 		//Initializes the lines
-		initializeLines(initPanel, FIELD_WIDTH, BAR_HEIGHT);
+		initializeLines(initPanel, FIELD_WIDTH, BAR_HEIGHT);		
 	}
 
 	/**
@@ -95,12 +103,79 @@ public class TicTacToeGUI
 		//Creates a new frame
 		frmTicTacToe = new JFrame();
 		frmTicTacToe.setTitle("Tic Tac Toe");
-		frmTicTacToe.setBounds(field_width, field_width, field_width * 3, field_width * 3 + bar_height * 2);
+		frmTicTacToe.setBounds(field_width, field_width, field_width * 3, field_width * 3 + bar_height * 3);
 		frmTicTacToe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmTicTacToe.getContentPane().setLayout(null);
 		return frmTicTacToe;
 	}
 
+	/**
+	 * Initializes the menu
+	 */
+	private void initializeMenu(JFrame frmTicTacToe, JLabel[] lblFields) 
+	{
+		//Creates a menubar
+		JMenuBar menuBar = new JMenuBar();
+		frmTicTacToe.setJMenuBar(menuBar);
+		//Adds the menu 'Game'
+		JMenu mnGame = new JMenu("Game");
+		menuBar.add(mnGame);
+		//Adds game 'TicTacToe'
+		JRadioButtonMenuItem btnGameTictactoe = new JRadioButtonMenuItem("TicTacToe");
+		btnGameTictactoe.setSelected(true);
+		mnGame.add(btnGameTictactoe);
+	    //Defines the possible choices for this menu
+	    final ButtonGroup grpGame = new ButtonGroup();
+	    grpGame.add(btnGameTictactoe);
+		//Adds the menu 'Player X'
+		JMenu mnPlayerX = new JMenu("Player X");
+		menuBar.add(mnPlayerX);
+		//Adds human player
+		JRadioButtonMenuItem btnXHuman = new JRadioButtonMenuItem("Human");
+		btnXHuman.setSelected(true);
+		mnPlayerX.add(btnXHuman);
+		//Adds computer player
+		JRadioButtonMenuItem btnXComputer = new JRadioButtonMenuItem("Computer");
+		mnPlayerX.add(btnXComputer);	    
+		//Defines the possible choices for this menu
+	    final ButtonGroup grpX = new ButtonGroup();
+	    grpX.add(btnXHuman);
+	    grpX.add(btnXComputer);
+		//Adds the menu 'Player O'
+		JMenu mnPlayerO = new JMenu("Player O");
+		menuBar.add(mnPlayerO);
+		//Adds human player
+		JRadioButtonMenuItem btnOHuman = new JRadioButtonMenuItem("Human");
+		btnOHuman.setSelected(true);
+		mnPlayerO.add(btnOHuman);
+		//Adds computer player
+		JRadioButtonMenuItem btnOComputer = new JRadioButtonMenuItem("Computer");
+		mnPlayerO.add(btnOComputer);
+		//Defines the possible choices for this menu
+	    final ButtonGroup grpO = new ButtonGroup();
+	    grpO.add(btnOHuman);
+	    grpO.add(btnOComputer);
+	    //Adds item listeners
+	    ItemListener iListen = new ItemListener()
+	    { 
+	    	@Override 
+			public void itemStateChanged(ItemEvent event) 
+			{
+				boolean selected = (event.getStateChange() == ItemEvent.SELECTED);
+				AbstractButton button = (AbstractButton)event.getItemSelectable( );
+				if(selected==true)
+				{
+					lblFields[0].setText("You selected " + button.getActionCommand() + " in menu " + button.getParent().getName());
+				}
+			}		
+	    };
+	    btnGameTictactoe.addItemListener(iListen);
+	    btnXHuman.addItemListener(iListen);
+	    btnXComputer.addItemListener(iListen);
+	    btnOHuman.addItemListener(iListen);
+	    btnOComputer.addItemListener(iListen);
+	}
+	
 	/**
 	 * Initializes the panel
 	 */
@@ -117,7 +192,7 @@ public class TicTacToeGUI
 	/**
 	 * Initializes the labels
 	 */
-	private void initializeLabels(TicTacToeGame initGame, JPanel panel, int field_width, int bar_height) 
+	private JLabel[] initializeLabels(TicTacToeGame initGame, JPanel panel, int field_width, int bar_height) 
 	{
 		//Nine fields plus a statusbar
 		JLabel[] lblFields = new JLabel[10];
@@ -169,6 +244,7 @@ public class TicTacToeGUI
 				panel.add(lblFields[labelNumber]);			
 			}
 		}
+		return lblFields;
 	}
 
 	/**
