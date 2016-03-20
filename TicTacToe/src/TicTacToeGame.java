@@ -131,6 +131,11 @@ public class TicTacToeGame
 			//Switches player
 			ticTacToeGameStatus.switchPlayer();
 		}
+		if(ticTacToeGameStatus.getPlayerType()==TicTacToeGUI.COMPUTER && ticTacToeGameStatus.getGameOver() == 0)
+		{
+			//Let's the computer place a marker
+			ComputerPlayer.performMonkeyMove(this);
+		}		
 	return ticTacToeGameStatus;
 	}
 }

@@ -3,11 +3,14 @@
  */
 public class TicTacToeGameStatus
 {
-	private String   currentPlayer;  // Describes who the current player is
-	private String   errorMessage ;  // Describes an error
-	private String[] fields;		 // Describes the contents of the nine fields
-	private int      gameOver;       // Describes whether the game is over or not
-	private String   winner;         // Describes who has won
+	private String   currentPlayer;        // Describes who the current player is
+	private String   currentPlayerType;    // Describes whether the current player human is or computer
+	private String   errorMessage ;        // Describes an error
+	private String[] fields;		       // Describes the contents of the nine fields
+	private int      gameOver;             // Describes whether the game is over or not
+	private String   playerTypeO;          // Describes whether player O is a human or a computer
+	private String   playerTypeX;          // Describes whether player X is a human or a computer
+	private String   winner;               // Describes who has won
 
 	/**
 	 *  Constructor
@@ -19,13 +22,16 @@ public class TicTacToeGameStatus
 		switch (coinFlip)
 		{
 			//Decides that O begins
-			case 0: setPlayer(TicTacToeGame.PLAYER_O);
-			break;
+			case 0: 
+				setPlayerTypeO(TicTacToeGUI.HUMAN);
+				setPlayerTypeX(TicTacToeGUI.COMPUTER);
+				setPlayer(TicTacToeGame.PLAYER_O); 
+				break;
 			//Decides that X begins
-			case 1: setPlayer(TicTacToeGame.PLAYER_X);
-			break;
-			//Unexpected scenario: decides that X begins
-			default: setPlayer(TicTacToeGame.PLAYER_X);
+			case 1: 
+				setPlayerTypeX(TicTacToeGUI.HUMAN);
+				setPlayerTypeO(TicTacToeGUI.COMPUTER);
+				setPlayer(TicTacToeGame.PLAYER_X); 
 			break;
 		}
 		//There have no errors occurred yet
@@ -39,26 +45,65 @@ public class TicTacToeGameStatus
 	}
 	
 	/**
-	 *  Current player
+	 *  Player
      */
 	public String getPlayer()
 	{
 		//Returns who's turn it is
-		return currentPlayer;
+		return currentPlayer;		
 	}
 	public void setPlayer(String newValue)
 	{
 		//Sets who's turn it is
 		currentPlayer = newValue;
+		switch(newValue)
+		{
+			case TicTacToeGame.PLAYER_O: currentPlayerType = getPlayerTypeO(); break;
+			case TicTacToeGame.PLAYER_X: currentPlayerType = getPlayerTypeX(); break;
+			default: currentPlayerType = TicTacToeGUI.HUMAN; break;
+		}
+	}
+	public String getPlayerType()
+	{
+		//Returns who's turn it is
+		return currentPlayerType;
+	}
+	public String getPlayerTypeO()
+	{
+		//Returns what type of player O is
+		return playerTypeO;
+	}
+	public void setPlayerTypeO(String newValue)
+	{
+		//Sets what type of player O is
+		playerTypeO = newValue;
+		if(currentPlayer==TicTacToeGame.PLAYER_O)
+		{
+			currentPlayerType = newValue; 
+		}
+	}
+	public String getPlayerTypeX()
+	{
+		//Returns what type of player X is
+		return playerTypeX;
+	}
+	public void setPlayerTypeX(String newValue)
+	{
+		//Sets what type of player X is
+		playerTypeX = newValue;
+		if(currentPlayer==TicTacToeGame.PLAYER_X)
+		{
+			currentPlayerType = newValue; 
+		}
 	}
 	public void switchPlayer()
 	{
 		//Sets who's turn it is
 		switch(currentPlayer)
 		{
-			case TicTacToeGame.PLAYER_O:	currentPlayer = TicTacToeGame.PLAYER_X; break;
-			case TicTacToeGame.PLAYER_X:	currentPlayer = TicTacToeGame.PLAYER_O; break;
-			default:						currentPlayer = TicTacToeGame.PLAYER_X; break;
+			case TicTacToeGame.PLAYER_O:	setPlayer(TicTacToeGame.PLAYER_X); break;
+			case TicTacToeGame.PLAYER_X:	setPlayer(TicTacToeGame.PLAYER_O); break;
+			default:						setPlayer(TicTacToeGame.PLAYER_X); break;
 		}
 	}
 	

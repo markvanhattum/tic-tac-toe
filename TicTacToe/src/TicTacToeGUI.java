@@ -11,16 +11,39 @@ import javax.swing.*;
 public class TicTacToeGUI 
 {
 	//The game has two players
-	public static final String PLAYER_X = "X";
-	public static final String PLAYER_O = "O";
 	public static final ImageIcon PICTURE_X = new ImageIcon("images/x.gif");
 	public static final ImageIcon PICTURE_O = new ImageIcon("images/o.gif");
-	//GUIs have frames
+	public static final String HUMAN = "Human";
+	public static final String COMPUTER = "Computer";
+	//TicTacToeGUIs have frames
 	private JFrame frmTicTacToe;
+	//TicTacToeGUIs have menu titles
+	private String menuPlayerO;
+	private String menuPlayerX;
 	
 	/**
-	 * A menu item listener
-	 */
+	 *  Menu
+     */
+	public String getMenuPlayerO()
+	{
+		//Returns the menu name
+		return menuPlayerO;
+	}
+	public void setMenuPlayerO(String newValue)
+	{
+		//Sets the menu name
+		menuPlayerO = newValue;
+	}
+	public String getMenuPlayerX()
+	{
+		//Returns the menu name
+		return menuPlayerX;
+	}
+	public void setMenuPlayerX(String newValue)
+	{
+		//Sets the menu name
+		menuPlayerX = newValue;
+	}
 
 	/**
 	 * Launches the application
@@ -74,13 +97,13 @@ public class TicTacToeGUI
 		//Initializes the game
 		initGame = initializeGame();
 		//Initializes the frame
-		initFrame = initializeFrame(initGame, FIELD_WIDTH, BAR_HEIGHT);
+		initFrame = initializeFrame(FIELD_WIDTH, BAR_HEIGHT);
 		//Initializes the panel
 		initPanel = initializePanel(initGame, initFrame, FIELD_WIDTH, BAR_HEIGHT);
 		//Initializes the labels
 		initFields = initializeLabels(initGame, initPanel, FIELD_WIDTH, BAR_HEIGHT);
 		//Initializes the menu
-		initializeMenu(initFrame, initFields);
+		initializeMenu(initFrame, initFields, initGame);
 		//Initializes the lines
 		initializeLines(initPanel, FIELD_WIDTH, BAR_HEIGHT);		
 	}
@@ -98,7 +121,7 @@ public class TicTacToeGUI
 	/**
 	 * Initializes the frame
 	 */
-	private JFrame initializeFrame(TicTacToeGame initGame, int field_width, int bar_height) 
+	private JFrame initializeFrame(int field_width, int bar_height) 
 	{
 		//Creates a new frame
 		frmTicTacToe = new JFrame();
@@ -112,7 +135,7 @@ public class TicTacToeGUI
 	/**
 	 * Initializes the menu
 	 */
-	private void initializeMenu(JFrame frmTicTacToe, JLabel[] lblFields) 
+	private void initializeMenu(JFrame frmTicTacToe, JLabel[] lblFields, TicTacToeGame initGame) 
 	{
 		//Creates a menubar
 		JMenuBar menuBar = new JMenuBar();
@@ -131,11 +154,10 @@ public class TicTacToeGUI
 		JMenu mnPlayerX = new JMenu("Player X");
 		menuBar.add(mnPlayerX);
 		//Adds human player
-		JRadioButtonMenuItem btnXHuman = new JRadioButtonMenuItem("Human");
-		btnXHuman.setSelected(true);
+		JRadioButtonMenuItem btnXHuman = new JRadioButtonMenuItem(HUMAN);
 		mnPlayerX.add(btnXHuman);
 		//Adds computer player
-		JRadioButtonMenuItem btnXComputer = new JRadioButtonMenuItem("Computer");
+		JRadioButtonMenuItem btnXComputer = new JRadioButtonMenuItem(COMPUTER);
 		mnPlayerX.add(btnXComputer);	    
 		//Defines the possible choices for this menu
 	    final ButtonGroup grpX = new ButtonGroup();
@@ -145,27 +167,51 @@ public class TicTacToeGUI
 		JMenu mnPlayerO = new JMenu("Player O");
 		menuBar.add(mnPlayerO);
 		//Adds human player
-		JRadioButtonMenuItem btnOHuman = new JRadioButtonMenuItem("Human");
-		btnOHuman.setSelected(true);
+		JRadioButtonMenuItem btnOHuman = new JRadioButtonMenuItem(HUMAN);
 		mnPlayerO.add(btnOHuman);
 		//Adds computer player
-		JRadioButtonMenuItem btnOComputer = new JRadioButtonMenuItem("Computer");
+		JRadioButtonMenuItem btnOComputer = new JRadioButtonMenuItem(COMPUTER);
 		mnPlayerO.add(btnOComputer);
 		//Defines the possible choices for this menu
 	    final ButtonGroup grpO = new ButtonGroup();
 	    grpO.add(btnOHuman);
 	    grpO.add(btnOComputer);
+		//Stores the menu name for players X and O
+	    setMenuPlayerX(mnPlayerX.getActionCommand());
+		setMenuPlayerO(mnPlayerO.getActionCommand());
 	    //Adds item listeners
 	    ItemListener iListen = new ItemListener()
 	    { 
 	    	@Override 
 			public void itemStateChanged(ItemEvent event) 
 			{
-				boolean selected = (event.getStateChange() == ItemEvent.SELECTED);
-				AbstractButton button = (AbstractButton)event.getItemSelectable( );
+	    		//Retrieves the selected menu item
+	    		JMenuItem menuItemSelected = (JMenuItem) event.getSource();
+	    		//Retrieves the involved pop-up menu
+	    		JPopupMenu popUpSelected   = (JPopupMenu) menuItemSelected.getParent();
+	    		//Retrieves the involved menu
+	    		JMenu menuSelected         = (JMenu) popUpSelected.getInvoker();
+	    		//Determines if a selection has been made
+	    		boolean selected           = (event.getStateChange() == ItemEvent.SELECTED);
 				if(selected==true)
 				{
-					lblFields[0].setText("You selected " + button.getActionCommand() + " in menu " + button.getParent().getName());
+					//Retrieves the involved player
+					String player = menuSelected.getActionCommand();
+					//Retrieves what sort of player it is (is it human or is it a computer?)
+					String playerType = menuItemSelected.getActionCommand();
+					//Retrieves the menu names
+					String menuPlayerO = getMenuPlayerO();
+					String menuPlayerX = getMenuPlayerX();
+					if(player==menuPlayerO)
+					{
+						initGame.ticTacToeGameStatus.setPlayerTypeO(playerType);
+					}
+					else if(player==menuPlayerX)
+					{
+						initGame.ticTacToeGameStatus.setPlayerTypeX(playerType);
+					}
+					//Informs the user
+					lblFields[0].setText(menuPlayerX+" ("+initGame.ticTacToeGameStatus.getPlayerTypeX()+") versus "+menuPlayerO+" ("+initGame.ticTacToeGameStatus.getPlayerTypeO()+") it is!");
 				}
 			}		
 	    };
@@ -174,6 +220,9 @@ public class TicTacToeGUI
 	    btnXComputer.addItemListener(iListen);
 	    btnOHuman.addItemListener(iListen);
 	    btnOComputer.addItemListener(iListen);
+		//Sets the players
+	    btnXHuman.setSelected(true);
+		btnOHuman.setSelected(true);
 	}
 	
 	/**
@@ -219,7 +268,7 @@ public class TicTacToeGUI
 				this.index = index;
 		    }
 			@Override
-			public void mousePressed ( MouseEvent event )
+			public void mousePressed (MouseEvent event)
 			{
 				//Reports the involved label index when the mouse was pressed
 				String status = "You clicked on "+ event.getComponent().getClass().getName() + Integer.toString(index);								
@@ -273,16 +322,40 @@ public class TicTacToeGUI
 	}
 
 	/**
-	 * Places a marker
+	 * Updates the GUI
 	 */
-	private void placeMarker(TicTacToeGame game, JLabel[] lblFields, int index) 
+	private void updateGUI(TicTacToeGame game, JLabel[] lblFields) 
 	{
+		//Loops through the menus
+		int menuCountMax = frmTicTacToe.getJMenuBar().getMenuCount() - 1;
+		for(int menuCount = 0;menuCount <= menuCountMax;menuCount++)
+		{
+			//Retrieves a menu
+			JMenu menuPlayer = frmTicTacToe.getJMenuBar().getMenu(menuCount);
+			//Loops through the menu items in this menu
+			int menuItemCountMax = menuPlayer.getItemCount() - 1;
+			for(int menuItemCount = 0;menuItemCount <= menuItemCountMax;menuItemCount++)
+			{
+				//Retrieves a menu item
+				JMenuItem menuItem = menuPlayer.getItem(menuItemCount);
+				if(menuPlayer.getActionCommand()==menuPlayerX && menuItem.getActionCommand()==game.ticTacToeGameStatus.getPlayerTypeX())
+				{
+					//Player X has this player type
+					menuItem.setSelected(true);
+					break;
+				}
+				if(menuPlayer.getActionCommand()==menuPlayerO && menuItem.getActionCommand()==game.ticTacToeGameStatus.getPlayerTypeO())
+				{
+					//Player O has this player type
+					menuItem.setSelected(true);
+					break;
+				}
+			}
+		}
 		String status = "";
-		//Places a marker and applies the rules
-		game.ticTacToeGameStatus = game.placeMarker(index);
+		//Sets the fields
 		for(int i = 1;i < 10;i++)
 		{
-			//Sets the fields
 			switch(game.ticTacToeGameStatus.getField(i))
 			{
 				case TicTacToeGame.PLAYER_X: lblFields[i].setIcon(PICTURE_X); break;
@@ -290,12 +363,25 @@ public class TicTacToeGUI
 				default: lblFields[i].setIcon(null); break;
 			}
 		}
+		//Checks whether the game is over or not
 		if (game.ticTacToeGameStatus.getGameOver() == 1)
 		{
 			status = "The game is over! ";
 			status += "And the winner is " + game.ticTacToeGameStatus.getWinner() + ".";
 		}
+		//Sets the status bar
 		status = Strings.NullValue(status, game.ticTacToeGameStatus.getField(0));
 		lblFields[0].setText(status);
+	}	
+
+	/**
+	 * Places a marker
+	 */
+	private void placeMarker(TicTacToeGame game, JLabel[] lblFields, int index) 
+	{
+		//Places a marker and applies the rules
+		game.ticTacToeGameStatus = game.placeMarker(index);
+		//Updates the GUI
+		updateGUI(game, lblFields);
 	}	
 }
