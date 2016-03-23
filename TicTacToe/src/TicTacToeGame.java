@@ -4,24 +4,33 @@
 public class TicTacToeGame 
 {
 	//The game has two players
-	public static final String PLAYER_O = "O";
-	public static final String PLAYER_X = "X";
+	public static  final String PLAYER_O       = "O";
+	public static  final String PLAYER_X       = "X";
+	private static final String TWO_TIMES_O    = "OO";
+	private static final String TWO_TIMES_X    = "XX";
+	private static final String O_WINS         = "OOO";
+	private static final String X_WINS         = "XXX";
 	//It's possible that nobody wins
 	public static final String NOBODY = "nobody";
-	private static final String O_WINS = "OOO";
-	private static final String X_WINS = "XXX";
 	//Creates a new game status
 	TicTacToeGameStatus ticTacToeGameStatus = new TicTacToeGameStatus();			
 	
 	/**
-	 *  Checks for a winner
+	 *  Checks for a winner and determines the game value
 	 */
 	public String theWinner()
 	{
+		int    setGameValue = 0;
+		int    gameValue    = 0;
+		int    gameValueRow = 0;
+		String currentPlayer;
+		String rowPlayer;
 		String returnValue = NOBODY; 
 		String threeFields = "";
 		for(int i = 1;i < 9; i++)
 		{
+			//Retrieves the current Player
+			currentPlayer = ticTacToeGameStatus.getPlayer();
 			switch (i)
 			{
 				case 1: threeFields = ticTacToeGameStatus.getField(1)+ticTacToeGameStatus.getField(2)+ticTacToeGameStatus.getField(3); break; //First row
@@ -33,16 +42,36 @@ public class TicTacToeGame
 				case 7: threeFields = ticTacToeGameStatus.getField(1)+ticTacToeGameStatus.getField(5)+ticTacToeGameStatus.getField(9); break; //Diagonal from the upper left corner
 				case 8: threeFields = ticTacToeGameStatus.getField(3)+ticTacToeGameStatus.getField(5)+ticTacToeGameStatus.getField(7); break; //Diagonal from the upper right corner
 			}			
-			switch(threeFields)
+			if (returnValue == NOBODY)
 			{
-				case X_WINS: returnValue = PLAYER_X; break;
-				case O_WINS: returnValue = PLAYER_O; break;
-				default    : returnValue = NOBODY;   break;
+				switch(threeFields)
+				{
+					case PLAYER_X   : setGameValue = 1; returnValue = NOBODY;   break;
+					case PLAYER_O   : setGameValue = 1; returnValue = NOBODY;   break;
+					case TWO_TIMES_X: setGameValue = 1; returnValue = NOBODY;   break;
+					case TWO_TIMES_O: setGameValue = 1; returnValue = NOBODY;   break;
+				    case X_WINS     : setGameValue = 1; returnValue = PLAYER_X; break;
+					case O_WINS     : setGameValue = 1; returnValue = PLAYER_O; break;
+					default         : setGameValue = 0; returnValue = NOBODY;   break;
+				}
 			}
-			if (returnValue != NOBODY)
+			if (setGameValue==1)
 			{
-				//We have a winner!
-				break;
+				//Retrieves the player of the field
+				rowPlayer = threeFields.substring(0,1);
+				//Determines the value of the row
+				gameValueRow = threeFields.length()*threeFields.length();
+				if(currentPlayer.equals(rowPlayer) == false)
+				{
+					//Sees an opponent row value as a negative value
+					gameValueRow = -gameValueRow;
+				}
+				//Determines the value of the current game situation
+				gameValue = gameValue + gameValueRow;
+				//Logs the game value to the status bar for fun
+				ticTacToeGameStatus.setField(0,"gameValue="+gameValue+" for player "+currentPlayer);
+				//Sets the new game value
+				ticTacToeGameStatus.setGameValue(gameValue);
 			}
 		}
 		return returnValue;

@@ -8,6 +8,7 @@ public class TicTacToeGameStatus
 	private String   errorMessage ;        // Describes an error
 	private String[] fields;		       // Describes the contents of the nine fields
 	private int      gameOver;             // Describes whether the game is over or not
+	private int      gameValue;            // Describes the value of the current game status
 	private String   playerTypeO;          // Describes whether player O is a human or a computer
 	private String   playerTypeX;          // Describes whether player X is a human or a computer
 	private String   winner;               // Describes who has won
@@ -175,5 +176,19 @@ public class TicTacToeGameStatus
 	{
 		//Sets whether the game is over or not
 		gameOver = newValue;
+	}
+
+	/**
+	 *  Game Value
+     */
+	public int getGameValue()
+	{
+		//Returns the game value
+		return gameValue;
+	}
+	public void setGameValue(int newValue)
+	{
+		//Sets the game value
+		gameValue = newValue;
 	}
 }	
