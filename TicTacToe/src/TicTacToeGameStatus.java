@@ -18,22 +18,25 @@ public class TicTacToeGameStatus
      */
 	public TicTacToeGameStatus()
 	{
-		//Flips a coin
-		int coinFlip = (int)(Math.random() * 2);			
-		switch (coinFlip)
+		if(currentPlayer==null)
 		{
-			//Decides that O begins
-			case 0: 
-				setPlayerTypeO(TicTacToeGUI.HUMAN);
-				setPlayerTypeX(TicTacToeGUI.COMPUTER);
-				setPlayer(TicTacToeGame.PLAYER_O); 
+			//Flips a coin
+			int coinFlip = (int)(Math.random() * 2);			
+			switch (coinFlip)
+			{
+				//Decides that O begins
+				case 0: 
+					setPlayerTypeO(TicTacToeGUI.HUMAN);
+					setPlayerTypeX(TicTacToeGUI.COMPUTER);
+					setCurrentPlayer(TicTacToeGame.PLAYER_O); 
+					break;
+				//Decides that X begins
+				case 1: 
+					setPlayerTypeX(TicTacToeGUI.HUMAN);
+					setPlayerTypeO(TicTacToeGUI.COMPUTER);
+					setCurrentPlayer(TicTacToeGame.PLAYER_X); 
 				break;
-			//Decides that X begins
-			case 1: 
-				setPlayerTypeX(TicTacToeGUI.HUMAN);
-				setPlayerTypeO(TicTacToeGUI.COMPUTER);
-				setPlayer(TicTacToeGame.PLAYER_X); 
-			break;
+			}
 		}
 		//There have no errors occurred yet
 		errorMessage = "";
@@ -48,28 +51,28 @@ public class TicTacToeGameStatus
 	/**
 	 *  Player
      */
-	public String getPlayer()
+	public String getCurrentPlayer()
 	{
 		//Returns who's turn it is
 		return currentPlayer;		
 	}
-	public void setPlayer(String newValue)
+	public void setCurrentPlayer(String newValue)
 	{
 		//Sets who's turn it is
 		currentPlayer = newValue;
 		switch(newValue)
 		{
-			case TicTacToeGame.PLAYER_O: currentPlayerType = getPlayerTypeO(); break;
+			case TicTacToeGame.PLAYER_O: currentPlayerType = getCurrentPlayerTypeO(); break;
 			case TicTacToeGame.PLAYER_X: currentPlayerType = getPlayerTypeX(); break;
 			default: currentPlayerType = TicTacToeGUI.HUMAN; break;
 		}
 	}
-	public String getPlayerType()
+	public String getCurrentPlayerType()
 	{
 		//Returns who's turn it is
 		return currentPlayerType;
 	}
-	public String getPlayerTypeO()
+	public String getCurrentPlayerTypeO()
 	{
 		//Returns what type of player O is
 		return playerTypeO;
@@ -102,9 +105,9 @@ public class TicTacToeGameStatus
 		//Sets who's turn it is
 		switch(currentPlayer)
 		{
-			case TicTacToeGame.PLAYER_O:	setPlayer(TicTacToeGame.PLAYER_X); break;
-			case TicTacToeGame.PLAYER_X:	setPlayer(TicTacToeGame.PLAYER_O); break;
-			default:						setPlayer(TicTacToeGame.PLAYER_X); break;
+			case TicTacToeGame.PLAYER_O:	setCurrentPlayer(TicTacToeGame.PLAYER_X); break;
+			case TicTacToeGame.PLAYER_X:	setCurrentPlayer(TicTacToeGame.PLAYER_O); break;
+			default:						setCurrentPlayer(TicTacToeGame.PLAYER_X); break;
 		}
 	}
 	
@@ -147,7 +150,7 @@ public class TicTacToeGameStatus
 			fields[idx] = new String();
 		}
 		//A new game has begun!
-		fields[0] = new String("A new game has begun! Player " + currentPlayer + " starts the game.");
+		fields[0] = new String("Player " + currentPlayer + " starts a new game.");
 	}		
 	
 	/**

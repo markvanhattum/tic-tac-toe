@@ -211,7 +211,7 @@ public class TicTacToeGUI
 						initGame.ticTacToeGameStatus.setPlayerTypeX(playerType);
 					}
 					//Informs the user
-					lblFields[0].setText(menuPlayerX+" ("+initGame.ticTacToeGameStatus.getPlayerTypeX()+") versus "+menuPlayerO+" ("+initGame.ticTacToeGameStatus.getPlayerTypeO()+") it is!");
+					lblFields[0].setText(menuPlayerX+" ("+initGame.ticTacToeGameStatus.getPlayerTypeX()+") versus "+menuPlayerO+" ("+initGame.ticTacToeGameStatus.getCurrentPlayerTypeO()+") it is!");
 				}
 			}		
 	    };
@@ -220,9 +220,8 @@ public class TicTacToeGUI
 	    btnXComputer.addItemListener(iListen);
 	    btnOHuman.addItemListener(iListen);
 	    btnOComputer.addItemListener(iListen);
-		//Sets the players
-	    btnXHuman.setSelected(true);
-		btnOHuman.setSelected(true);
+		//Initializes the GUI
+	    updateGUI(initGame, lblFields);
 	}
 	
 	/**
@@ -344,7 +343,7 @@ public class TicTacToeGUI
 					menuItem.setSelected(true);
 					break;
 				}
-				if(menuPlayer.getActionCommand()==menuPlayerO && menuItem.getActionCommand()==game.ticTacToeGameStatus.getPlayerTypeO())
+				if(menuPlayer.getActionCommand()==menuPlayerO && menuItem.getActionCommand()==game.ticTacToeGameStatus.getCurrentPlayerTypeO())
 				{
 					//Player O has this player type
 					menuItem.setSelected(true);
@@ -363,14 +362,8 @@ public class TicTacToeGUI
 				default: lblFields[i].setIcon(null); break;
 			}
 		}
-		//Checks whether the game is over or not
-		if (game.ticTacToeGameStatus.getGameOver() == 1)
-		{
-			status = "The game is over! ";
-			status += "And the winner is " + game.ticTacToeGameStatus.getWinner() + ".";
-		}
 		//Sets the status bar
-		status = Strings.NullValue(status, game.ticTacToeGameStatus.getField(0));
+		status = game.ticTacToeGameStatus.getField(0);
 		lblFields[0].setText(status);
 	}	
 
