@@ -1,6 +1,7 @@
 //Import AWT
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 //Import Swing
 import javax.swing.*;
@@ -211,7 +212,7 @@ public class TicTacToeGUI
 						initGame.ticTacToeGameStatus.setPlayerTypeX(playerType);
 					}
 					//Informs the user
-					lblFields[0].setText(menuPlayerX+" ("+initGame.ticTacToeGameStatus.getPlayerTypeX()+") versus "+menuPlayerO+" ("+initGame.ticTacToeGameStatus.getCurrentPlayerTypeO()+") it is!");
+					lblFields[0].setText(menuPlayerX+" ("+initGame.ticTacToeGameStatus.getPlayerTypeX()+") versus "+menuPlayerO+" ("+initGame.ticTacToeGameStatus.getPlayerTypeO()+") it is!");
 				}
 			}		
 	    };
@@ -326,14 +327,14 @@ public class TicTacToeGUI
 	private void updateGUI(TicTacToeGame game, JLabel[] lblFields) 
 	{
 		//Loops through the menus
-		int menuCountMax = frmTicTacToe.getJMenuBar().getMenuCount() - 1;
-		for(int menuCount = 0;menuCount <= menuCountMax;menuCount++)
+		int menuCountMax = frmTicTacToe.getJMenuBar().getMenuCount();
+		for(int menuCount = 0;menuCount < menuCountMax;menuCount++)
 		{
 			//Retrieves a menu
 			JMenu menuPlayer = frmTicTacToe.getJMenuBar().getMenu(menuCount);
 			//Loops through the menu items in this menu
-			int menuItemCountMax = menuPlayer.getItemCount() - 1;
-			for(int menuItemCount = 0;menuItemCount <= menuItemCountMax;menuItemCount++)
+			int menuItemCountMax = menuPlayer.getItemCount();
+			for(int menuItemCount = 0;menuItemCount < menuItemCountMax;menuItemCount++)
 			{
 				//Retrieves a menu item
 				JMenuItem menuItem = menuPlayer.getItem(menuItemCount);
@@ -343,7 +344,7 @@ public class TicTacToeGUI
 					menuItem.setSelected(true);
 					break;
 				}
-				if(menuPlayer.getActionCommand()==menuPlayerO && menuItem.getActionCommand()==game.ticTacToeGameStatus.getCurrentPlayerTypeO())
+				if(menuPlayer.getActionCommand()==menuPlayerO && menuItem.getActionCommand()==game.ticTacToeGameStatus.getPlayerTypeO())
 				{
 					//Player O has this player type
 					menuItem.setSelected(true);
@@ -373,8 +374,36 @@ public class TicTacToeGUI
 	private void placeMarker(TicTacToeGame game, JLabel[] lblFields, int index) 
 	{
 		//Places a marker and applies the rules
-		game.ticTacToeGameStatus = game.placeMarker(index);
+		game.ticTacToeGameStatus = game.placeMarker(index, game.ticTacToeGameStatus);
 		//Updates the GUI
 		updateGUI(game, lblFields);
+		//Retrieves the current player type
+		String currentPlayerType = game.ticTacToeGameStatus.getCurrentPlayerType();
+		if(currentPlayerType == TicTacToeGUI.COMPUTER && game.ticTacToeGameStatus.getGameOver() == 0)
+		{
+			//Creates an array of game statuses
+			ArrayList<TicTacToeGameStatus> gameStatuses = new ArrayList<TicTacToeGameStatus>();
+			//Copies the current game status
+			TicTacToeGameStatus copiedGameStatus = new TicTacToeGameStatus(game.ticTacToeGameStatus);
+			//Adds the current game status to the list of game statuses			
+			gameStatuses.add(copiedGameStatus);
+			for(int i=0;i<gameStatuses.size();i++)
+			{
+				//Let's the computer place a marker
+				gameStatuses = ComputerPlayer.performCalculatedMove(game,gameStatuses.get(i));
+				//Resets the loop
+				//i=0;
+				//Ends the loop for now
+				//We only go one level deep for now
+				//Needs work
+				i = gameStatuses.size();
+			}
+			//Updates the GUI
+			updateGUI(game, lblFields);
+			//Places a marker and applies the rules
+			game.ticTacToeGameStatus = game.placeMarker(game.ticTacToeGameStatus.getBestMove(),game.ticTacToeGameStatus);
+			//Updates the GUI
+			updateGUI(game, lblFields);
+		}
 	}	
 }

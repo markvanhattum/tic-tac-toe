@@ -3,21 +3,27 @@
  */
 public class TicTacToeGameStatus
 {
-	private String   currentPlayer;        // Describes who the current player is
-	private String   currentPlayerType;    // Describes whether the current player human is or computer
-	private String   errorMessage ;        // Describes an error
-	private String[] fields;		       // Describes the contents of the nine fields
-	private int      gameOver;             // Describes whether the game is over or not
-	private int      gameValue;            // Describes the value of the current game status
-	private String   playerTypeO;          // Describes whether player O is a human or a computer
-	private String   playerTypeX;          // Describes whether player X is a human or a computer
-	private String   winner;               // Describes who has won
+	private int           bestMove;             // Describes the best move
+	private int[]         childGameValues;      // Describes the values of the child game statuses
+	private String        currentPlayer;        // Describes who the current player is
+	private String        currentPlayerType;    // Describes whether the current player human is or computer
+	private String        errorMessage ;        // Describes an error
+	private String[]      fields;		        // Describes the contents of the nine fields
+	private int           gameOver;             // Describes whether the game is over or not
+	private int           gameValue;            // Describes the value of the current game status
+	private String        playerTypeO;          // Describes whether player O is a human or a computer
+	private String        playerTypeX;          // Describes whether player X is a human or a computer
+	private TicTacToeGame theGame;              // The game to which this game status belongs to 
+	private String        winner;               // Describes who has won
 
 	/**
-	 *  Constructor
+	 *  Constructors
      */
 	public TicTacToeGameStatus()
 	{
+		this.setBestMove(0);
+		int[] newChildGameValues = {-99, -99, -99, -99, -99, -99, -99, -99, -99, -99};
+		this.setChildGameValues(newChildGameValues);
 		if(currentPlayer==null)
 		{
 			//Flips a coin
@@ -44,10 +50,71 @@ public class TicTacToeGameStatus
 		resetFields();
 		//The game has just started
 		setGameOver(0);
+		//The game has little value yet
+		setGameValue(-99);
 		//The game hasn't been won yet
 		this.setWinner(TicTacToeGame.NOBODY);
 	}
+
+	public TicTacToeGameStatus(TicTacToeGameStatus parentGameStatus)
+	{
+		//Copies the object
+		this.bestMove = parentGameStatus.getBestMove();
+		this.childGameValues = parentGameStatus.getChildGameValues();
+		this.currentPlayer = parentGameStatus.getCurrentPlayer();
+		this.currentPlayerType = parentGameStatus.getCurrentPlayerType();
+		this.errorMessage = parentGameStatus.getErrorMessage();
+		this.fields = parentGameStatus.getFields();
+		this.gameOver = parentGameStatus.getGameOver();
+		this.gameValue = parentGameStatus.getGameValue();
+		this.playerTypeO = parentGameStatus.getPlayerTypeO();
+		this.playerTypeX = parentGameStatus.getPlayerTypeX();
+		this.winner = parentGameStatus.getWinner();
+		this.theGame = new TicTacToeGame(parentGameStatus.theGame);
+	}
 	
+	/**
+	 *  Best moves
+     */
+	public int getBestMove()
+	{
+		//Returns who's turn it is
+		return bestMove;		
+	}
+	public void setBestMove(int newValue)
+	{
+		//Sets who's turn it is
+		this.bestMove = newValue;
+	}
+
+	/**
+	 *  Child game values
+     */
+	public int getChildGameValue(int index)
+	{
+		//Returns the contents of a child game value
+		return childGameValues[index];
+	}
+	public void setChildGameValue(int index, int newValue)
+	{
+		//Sets the contents of a child game value
+		this.childGameValues[index] = newValue;
+	}
+	public int[] getChildGameValues()
+	{
+		int[] returnValue = new int[this.childGameValues.length];
+		//Gets the contents of the child game values
+		System.arraycopy(this.childGameValues, 0, returnValue, 0, this.childGameValues.length);
+		//Returns the child game values
+		return returnValue;
+	}
+	public void setChildGameValues(int[] newValue)
+	{
+		this.childGameValues = new int[newValue.length];
+		//Sets the contents of the childGameValues
+		System.arraycopy(newValue, 0, this.childGameValues, 0, newValue.length);
+	}
+
 	/**
 	 *  Player
      */
@@ -59,10 +126,10 @@ public class TicTacToeGameStatus
 	public void setCurrentPlayer(String newValue)
 	{
 		//Sets who's turn it is
-		currentPlayer = newValue;
+		this.currentPlayer = newValue;
 		switch(newValue)
 		{
-			case TicTacToeGame.PLAYER_O: currentPlayerType = getCurrentPlayerTypeO(); break;
+			case TicTacToeGame.PLAYER_O: currentPlayerType = getPlayerTypeO(); break;
 			case TicTacToeGame.PLAYER_X: currentPlayerType = getPlayerTypeX(); break;
 			default: currentPlayerType = TicTacToeGUI.HUMAN; break;
 		}
@@ -72,7 +139,7 @@ public class TicTacToeGameStatus
 		//Returns who's turn it is
 		return currentPlayerType;
 	}
-	public String getCurrentPlayerTypeO()
+	public String getPlayerTypeO()
 	{
 		//Returns what type of player O is
 		return playerTypeO;
@@ -80,10 +147,10 @@ public class TicTacToeGameStatus
 	public void setPlayerTypeO(String newValue)
 	{
 		//Sets what type of player O is
-		playerTypeO = newValue;
+		this.playerTypeO = newValue;
 		if(currentPlayer==TicTacToeGame.PLAYER_O)
 		{
-			currentPlayerType = newValue; 
+			this.currentPlayerType = newValue; 
 		}
 	}
 	public String getPlayerTypeX()
@@ -94,10 +161,10 @@ public class TicTacToeGameStatus
 	public void setPlayerTypeX(String newValue)
 	{
 		//Sets what type of player X is
-		playerTypeX = newValue;
+		this.playerTypeX = newValue;
 		if(currentPlayer==TicTacToeGame.PLAYER_X)
 		{
-			currentPlayerType = newValue; 
+			this.currentPlayerType = newValue; 
 		}
 	}
 	public void switchPlayer()
@@ -122,7 +189,7 @@ public class TicTacToeGameStatus
 	public void setErrorMessage(String newValue)
 	{
 		//Sets the error message
-		errorMessage = newValue;
+		this.errorMessage = newValue;
 		//Sets the statusbar
 		fields[0] = errorMessage;
 	}
@@ -138,7 +205,22 @@ public class TicTacToeGameStatus
 	public void setField(int index, String newValue)
 	{
 		//Sets the contents of a field
-		fields[index] = newValue;
+		this.fields[index] = newValue;
+	}
+	public String[] getFields()
+	{
+		//Declares a return value
+		String[] returnValue = new String[this.fields.length];
+		//Gets the contents of the fields
+		System.arraycopy(this.fields, 0, returnValue, 0, this.fields.length);
+		//Returns the fields
+		return returnValue;
+	}
+	public void setFields(String[] newValue)
+	{
+		this.fields = new String[newValue.length];
+		//Sets the contents of the fields
+		System.arraycopy(newValue, 0, this.fields, 0, newValue.length);
 	}
 	public void resetFields()
 	{
@@ -147,12 +229,25 @@ public class TicTacToeGameStatus
 		for (int idx=1;idx < fields.length;idx++)
 		{
 			//Resets a field
-			fields[idx] = new String();
+			this.setField(idx,"");
 		}
 		//A new game has begun!
-		fields[0] = new String("Player " + currentPlayer + " starts a new game.");
+		this.setField(0, "Player " + currentPlayer + " starts a new game.");
 	}		
 	
+	/**
+	 *  The Game
+     */
+	public TicTacToeGame getGame()
+	{
+		//Returns the game
+		return theGame;		
+	}
+	public void setGame(TicTacToeGame newValue)
+	{
+		//Sets the Game
+		this.theGame = newValue;
+	}
 	/**
 	 *  Winner
      */
@@ -164,7 +259,7 @@ public class TicTacToeGameStatus
 	public void setWinner(String newValue)
 	{
 		//Sets who the winner is
-		winner = newValue;
+		this.winner = newValue;
 	}
 	
 	/**
@@ -178,7 +273,7 @@ public class TicTacToeGameStatus
 	public void setGameOver(int newValue)
 	{
 		//Sets whether the game is over or not
-		gameOver = newValue;
+		this.gameOver = newValue;
 	}
 
 	/**
@@ -192,6 +287,6 @@ public class TicTacToeGameStatus
 	public void setGameValue(int newValue)
 	{
 		//Sets the game value
-		gameValue = newValue;
+		this.gameValue = newValue;
 	}
 }	

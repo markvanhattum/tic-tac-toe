@@ -18,9 +18,23 @@ public class TicTacToeGame
 	TicTacToeGameStatus ticTacToeGameStatus = new TicTacToeGameStatus();			
 	
 	/**
+	 *  Constructor
+     */
+	public TicTacToeGame()
+	{
+		//Sets this game as the parent of the game status
+		ticTacToeGameStatus.setGame(this);
+	}
+	public TicTacToeGame(TicTacToeGame parentGame)
+	{
+		//Copies the object
+		this.ticTacToeGameStatus = parentGame.ticTacToeGameStatus;
+	}
+
+	/**
 	 *  Checks for a winner and determines the game value
 	 */
-	public String theWinner()
+	public String theWinner(TicTacToeGameStatus gameStatus)
 	{
 		int    gameValue    = 0;
 		int    gameValueRow = 0;
@@ -38,17 +52,17 @@ public class TicTacToeGame
 		for(int i = 1;i < 9; i++)
 		{
 			//Retrieves the current Player
-			currentPlayer = ticTacToeGameStatus.getCurrentPlayer();
+			currentPlayer = gameStatus.getCurrentPlayer();
 			switch (i)
 			{
-				case 1: threeFields = ticTacToeGameStatus.getField(1)+ticTacToeGameStatus.getField(2)+ticTacToeGameStatus.getField(3); break; //First row
-				case 2: threeFields = ticTacToeGameStatus.getField(4)+ticTacToeGameStatus.getField(5)+ticTacToeGameStatus.getField(6); break; //Second row
-				case 3: threeFields = ticTacToeGameStatus.getField(7)+ticTacToeGameStatus.getField(8)+ticTacToeGameStatus.getField(9); break; //Third row
-				case 4: threeFields = ticTacToeGameStatus.getField(1)+ticTacToeGameStatus.getField(4)+ticTacToeGameStatus.getField(7); break; //First column
-				case 5: threeFields = ticTacToeGameStatus.getField(2)+ticTacToeGameStatus.getField(5)+ticTacToeGameStatus.getField(8); break; //Second column
-				case 6: threeFields = ticTacToeGameStatus.getField(3)+ticTacToeGameStatus.getField(6)+ticTacToeGameStatus.getField(9); break; //Third column
-				case 7: threeFields = ticTacToeGameStatus.getField(1)+ticTacToeGameStatus.getField(5)+ticTacToeGameStatus.getField(9); break; //Diagonal from the upper left corner
-				case 8: threeFields = ticTacToeGameStatus.getField(3)+ticTacToeGameStatus.getField(5)+ticTacToeGameStatus.getField(7); break; //Diagonal from the upper right corner
+				case 1: threeFields = gameStatus.getField(1)+gameStatus.getField(2)+gameStatus.getField(3); break; //First row
+				case 2: threeFields = gameStatus.getField(4)+gameStatus.getField(5)+gameStatus.getField(6); break; //Second row
+				case 3: threeFields = gameStatus.getField(7)+gameStatus.getField(8)+gameStatus.getField(9); break; //Third row
+				case 4: threeFields = gameStatus.getField(1)+gameStatus.getField(4)+gameStatus.getField(7); break; //First column
+				case 5: threeFields = gameStatus.getField(2)+gameStatus.getField(5)+gameStatus.getField(8); break; //Second column
+				case 6: threeFields = gameStatus.getField(3)+gameStatus.getField(6)+gameStatus.getField(9); break; //Third column
+				case 7: threeFields = gameStatus.getField(1)+gameStatus.getField(5)+gameStatus.getField(9); break; //Diagonal from the upper left corner
+				case 8: threeFields = gameStatus.getField(3)+gameStatus.getField(5)+gameStatus.getField(7); break; //Diagonal from the upper right corner
 			}			
 			if (returnValue == NOBODY)
 			{
@@ -72,9 +86,9 @@ public class TicTacToeGame
 				//Determines the value of the current game situation
 				gameValue = gameValue + gameValueRow;
 				//Logs the game value to the status bar for fun
-				//ticTacToeGameStatus.setField(0,"Game value = "+gameValue+" for player "+currentPlayer);
+				//gameStatus.setField(0,"Game value = "+gameValue+" for player "+currentPlayer);
 				//Sets the new game value
-				ticTacToeGameStatus.setGameValue(gameValue);
+				gameStatus.setGameValue(gameValue);
 			}
 		}
 		return returnValue;
@@ -83,7 +97,7 @@ public class TicTacToeGame
 	/**
 	 *  Checks if the move is valid
 	 */
-	public boolean isValidMove(Integer index)
+	public boolean isValidMove(Integer index, TicTacToeGameStatus gameStatus)
 	{
 		Integer start           = Integers.NullValue(index, 1);
 		Integer stop            = Integers.NullValue(index, 9);
@@ -92,8 +106,8 @@ public class TicTacToeGame
 				               && loopIndex <= stop 
 				               && loopIndex <= 9;loopIndex++)
 		{			
-			if(ticTacToeGameStatus.getField(loopIndex) != PLAYER_X 
-			&& ticTacToeGameStatus.getField(loopIndex) != PLAYER_O)
+			if(gameStatus.getField(loopIndex) != PLAYER_X 
+			&& gameStatus.getField(loopIndex) != PLAYER_O)
 			{
 				//This is a valid move
 				returnValue = true;
@@ -106,14 +120,14 @@ public class TicTacToeGame
 	/**
 	 *  Retrieves the valid moves
 	 */
-	public ArrayList<Integer> getValidMoves()
+	public ArrayList<Integer> getValidMoves(TicTacToeGameStatus gameStatus)
 	{
 		ArrayList<Integer> validMoves = new ArrayList<Integer>();
 		//Loops through the possible moves 
 		for(int loopIndex = 1;loopIndex <= 9;loopIndex++)
 		{			
 			//Checks if the move is valid
-			if(isValidMove(loopIndex))
+			if(isValidMove(loopIndex, gameStatus))
 			{
 				//Adds the move to the list of valid moves
 				validMoves.add(loopIndex);
@@ -125,98 +139,73 @@ public class TicTacToeGame
 	/**
 	 *  Applies the rules before the move
 	 */
-	public void applyRulesBefore(Integer index)
+	public void applyRulesBefore(Integer index, TicTacToeGameStatus gameStatus)
 	{
-		//Is the current move valid?
-		if(!isValidMove(index) && index != null)
+		//Are we still playing?
+		if (gameStatus.getGameOver() == 0)
 		{
-			//The current move is invalid
-			ticTacToeGameStatus.setErrorMessage("Invalid move");
-		}
-		else
-		{
-			//No errors so far
-			ticTacToeGameStatus.setErrorMessage(null);
-		}
-		//Has the game ended?
-		if (ticTacToeGameStatus.getGameOver() == 1)
-		{
-			String currentStatus = "";
-			//Checks whether the game is over or not
-			if (ticTacToeGameStatus.getGameOver() == 1)
+			//Is the current move valid?
+			if(!isValidMove(index, gameStatus) && index != null)
 			{
-				currentStatus  = ticTacToeGameStatus.getWinner() + " has won the game! ";
+				//The current move is invalid
+				gameStatus.setErrorMessage("Invalid move");
 			}
-			//Start a new game
-			ticTacToeGameStatus = new TicTacToeGameStatus();
-			//Retrieves the new status
-			String newStatus = ticTacToeGameStatus.getField(0);
-			//Updates the current status
-			ticTacToeGameStatus.setField(0, currentStatus+newStatus);
+			else
+			{
+				//No errors so far
+				gameStatus.setErrorMessage(null);
+			}
 		}
 	}
 	
 	/**
 	 *  Applies the rules after the move
 	 */
-	public void applyRulesAfter(Integer index)
+	public TicTacToeGameStatus applyRulesAfter(Integer index, TicTacToeGameStatus gameStatus)
 	{
 		//Are there any valid moves left?
-		if(!isValidMove(null))
+		if(!isValidMove(null, gameStatus))
 		{
 			//There are no valid moves left
-			ticTacToeGameStatus.setGameOver(1);
-			ticTacToeGameStatus.setWinner(NOBODY);
+			gameStatus.setGameOver(1);
+			gameStatus.setWinner(NOBODY);
+		}
+		//Has the game ended?
+		if (gameStatus.getGameOver() == 1)
+		{
+			//Start a new game
+			gameStatus = new TicTacToeGameStatus();
 		}
 		//Counts three-in-a-row
-		String theWinner = theWinner();
+		String theWinner = theWinner(gameStatus);
 		if (theWinner != NOBODY)
 		{
 			//We have a winner!
-			ticTacToeGameStatus.setGameOver(1);
-			ticTacToeGameStatus.setWinner(theWinner);
+			gameStatus.setGameOver(1);
+			gameStatus.setWinner(theWinner);
+			//Updates the current status
+			gameStatus.setField(0, gameStatus.getWinner() + " has won the game! ");
 		}
+		return gameStatus;
 	}
 	
 	/**
 	 *  Places a marker
 	 */
-	public TicTacToeGameStatus placeMarker(int index)
+	public TicTacToeGameStatus placeMarker(int index, TicTacToeGameStatus gameStatus)
 	{
-		final int NO_MOVE = -1;
-		int currentMove = index;
-		//Retrieves the current player type
-		String currentPlayerType = ticTacToeGameStatus.getCurrentPlayerType();
-		switch(currentPlayerType)
-		{
-		case TicTacToeGUI.COMPUTER: 			
-			//Let's the computer place a marker
-			currentMove = ComputerPlayer.performMonkeyMove(this);
-			break;
-		case TicTacToeGUI.HUMAN: 			
-			//Let's the human place a marker
-			currentMove = index;
-			break;
-		}
 		//Applies the rules
-		applyRulesBefore(currentMove);
-		if(ticTacToeGameStatus.getErrorMessage() == null && ticTacToeGameStatus.getGameOver() == 0)
+		applyRulesBefore(index, gameStatus);
+		if(gameStatus.getErrorMessage() == null && gameStatus.getGameOver() == 0)
 		{
 			//Makes a move
-			ticTacToeGameStatus.setField(currentMove, ticTacToeGameStatus.getCurrentPlayer());
-			//Applies the rules
-			applyRulesAfter(currentMove);
+			gameStatus.setField(index, gameStatus.getCurrentPlayer());
 			//Switches player
-			ticTacToeGameStatus.switchPlayer();
-			//Retrieves the current player type
-			currentPlayerType = ticTacToeGameStatus.getCurrentPlayerType();
-			if(currentPlayerType == TicTacToeGUI.COMPUTER)
-			{
-				//Performs a computer move 
-				ticTacToeGameStatus = placeMarker(NO_MOVE);
-			}
+			gameStatus.switchPlayer();
 		}
-	return ticTacToeGameStatus;
+		//Applies the rules
+		gameStatus = applyRulesAfter(index, gameStatus);
+		return gameStatus;
 	}
 }
 
